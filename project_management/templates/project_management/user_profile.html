@@ -1,0 +1,271 @@
+{% extends 'project_management/base.html' %}
+
+{% block title %}Mon Profil - Gestion de Projet{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="flex items-center">
+    <svg class="w-4 h-4 text-gray-400 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+    </svg>
+    <span class="text-gray-700">Mon Profil</span>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Informations personnelles et formulaire d'édition -->
+        <div class="md:col-span-2">
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <div class="px-4 py-5 sm:px-6 bg-fr-blue text-white">
+                    <h2 class="text-xl font-semibold">Informations personnelles</h2>
+                    <p class="mt-1 text-sm">Mettez à jour vos informations personnelles</p>
+                </div>
+
+                <div class="px-4 py-5 sm:p-6 space-y-6">
+                    <form method="POST" action="{% url 'project_management:user_profile' %}">
+                        {% csrf_token %}
+
+                        {% if messages %}
+                        <div class="mb-4">
+                            {% for message in messages %}
+                            <div
+                                class="p-4 {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %} rounded-md">
+                                {{ message }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                            <!-- Prénom -->
+                            <div>
+                                <label for="{{ form.first_name.id_for_label }}"
+                                    class="block text-sm font-medium text-gray-700">
+                                    Prénom
+                                </label>
+                                <div class="mt-1">
+                                    {{ form.first_name }}
+                                </div>
+                                {% if form.first_name.errors %}
+                                <p class="mt-2 text-sm text-red-600">{{ form.first_name.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+
+                            <!-- Nom -->
+                            <div>
+                                <label for="{{ form.last_name.id_for_label }}"
+                                    class="block text-sm font-medium text-gray-700">
+                                    Nom
+                                </label>
+                                <div class="mt-1">
+                                    {{ form.last_name }}
+                                </div>
+                                {% if form.last_name.errors %}
+                                <p class="mt-2 text-sm text-red-600">{{ form.last_name.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+
+                            <!-- Nom d'utilisateur -->
+                            <div>
+                                <label for="{{ form.username.id_for_label }}"
+                                    class="block text-sm font-medium text-gray-700">
+                                    Nom d'utilisateur
+                                </label>
+                                <div class="mt-1">
+                                    {{ form.username }}
+                                </div>
+                                {% if form.username.errors %}
+                                <p class="mt-2 text-sm text-red-600">{{ form.username.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+
+                            <!-- Email -->
+                            <div>
+                                <label for="{{ form.email.id_for_label }}"
+                                    class="block text-sm font-medium text-gray-700">
+                                    Adresse email
+                                </label>
+                                <div class="mt-1">
+                                    {{ form.email }}
+                                </div>
+                                {% if form.email.errors %}
+                                <p class="mt-2 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+
+                            <!-- Matricule -->
+                            <div class="sm:col-span-2">
+                                <label for="{{ form.matricule.id_for_label }}"
+                                    class="block text-sm font-medium text-gray-700">
+                                    Matricule
+                                </label>
+                                <div class="mt-1">
+                                    {{ form.matricule }}
+                                </div>
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Le format '0045-XXX' est destiné aux chefs de projet. Tout changement de format peut
+                                    affecter vos permissions.
+                                </p>
+                                {% if form.matricule.errors %}
+                                <p class="mt-2 text-sm text-red-600">{{ form.matricule.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end mt-6">
+                            <button type="submit"
+                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-fr-blue hover:bg-fr-blue-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-fr-blue">
+                                Enregistrer les modifications
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sécurité du compte -->
+            <div class="bg-white shadow rounded-lg overflow-hidden mt-6">
+                <div class="px-4 py-5 sm:px-6 bg-fr-blue-dark text-white">
+                    <h2 class="text-xl font-semibold">Sécurité du compte</h2>
+                    <p class="mt-1 text-sm">Gérez la sécurité de votre compte</p>
+                </div>
+
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900">Mot de passe</h3>
+                            <p class="mt-1 text-sm text-gray-500">Modifiez votre mot de passe pour renforcer la sécurité
+                                de votre compte</p>
+                        </div>
+                        <a href="{% url 'project_management:change_password' %}"
+                            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-fr-blue">
+                            Changer le mot de passe
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informations du compte et statistiques -->
+        <div class="md:col-span-1">
+            <!-- Carte d'information du compte -->
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <div class="px-4 py-5 sm:px-6 bg-fr-blue text-white flex items-center">
+                    <div
+                        class="h-12 w-12 rounded-full bg-fr-blue-dark flex items-center justify-center text-white text-xl font-bold mr-4">
+                        {{ user.username|first|upper }}
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold">{{ user.first_name }} {{ user.last_name }}</h2>
+                        <p class="text-sm opacity-80">@{{ user.username }}</p>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200">
+                    <dl>
+                        <div class="bg-gray-50 px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Rôle</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                <span class="px-2 py-1 text-xs font-medium rounded-full
+                                        {% if user.is_staff %}
+                                            bg-purple-100 text-purple-800
+                                        {% elif 'Chef de projet' in user.groups.all|stringformat:'s' %}
+                                            bg-blue-100 text-blue-800
+                                        {% else %}
+                                            bg-green-100 text-green-800
+                                        {% endif %}">
+                                    {% if user.is_staff %}
+                                    Administrateur
+                                    {% elif 'Chef de projet' in user.groups.all|stringformat:'s' %}
+                                    Chef de projet
+                                    {% else %}
+                                    Membre d'équipe
+                                    {% endif %}
+                                </span>
+                            </dd>
+                        </div>
+
+                        <div class="bg-white px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Dernière connexion</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ user.last_login|date:"d/m/Y H:i" }}
+                            </dd>
+                        </div>
+
+                        <div class="bg-gray-50 px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Équipes</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ teams.count }}
+                            </dd>
+                        </div>
+
+                        <div class="bg-white px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">Tâches assignées</dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ tasks.count }}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Activité récente -->
+            <div class="bg-white shadow rounded-lg overflow-hidden mt-6">
+                <div class="px-4 py-5 sm:px-6 bg-gray-50">
+                    <h2 class="text-lg font-medium text-gray-900">Tâches récentes</h2>
+                </div>
+
+                <div class="divide-y divide-gray-200 max-h-80 overflow-y-auto">
+                    {% if tasks %}
+                    {% for task in tasks|slice:":5" %}
+                    <div class="px-4 py-4 hover:bg-gray-50">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <span class="inline-flex items-center justify-center h-8 w-8 rounded-full
+                                                {% if task.status == 'À faire' %}
+                                                    bg-yellow-100 text-yellow-600
+                                                {% elif task.status == 'En cours' %}
+                                                    bg-blue-100 text-blue-600
+                                                {% else %}
+                                                    bg-green-100 text-green-600
+                                                {% endif %}">
+                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                                        </path>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="ml-3 flex-1">
+                                <div class="text-sm font-medium text-fr-blue">
+                                    <a href="{% url 'project_management:task_detail' task.id %}"
+                                        class="hover:underline">
+                                        {{ task.title }}
+                                    </a>
+                                </div>
+                                <div class="mt-1 text-xs text-gray-500 flex items-center justify-between">
+                                    <span>{{ task.project.name }}</span>
+                                    <span>{{ task.due_date|date:"d/m/Y" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="px-4 py-5 text-center">
+                        <p class="text-sm text-gray-500">Aucune tâche assignée.</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="border-t border-gray-200 px-4 py-4 sm:px-6">
+                    <a href="#" class="text-sm font-medium text-fr-blue hover:text-fr-blue-dark">
+                        Voir toutes mes tâches <span aria-hidden="true">&rarr;</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

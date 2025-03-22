@@ -1,0 +1,71 @@
+
+{% extends 'project_management/base.html' %}
+{% load static %}
+
+{% block title %}Paramètres - Mairie de Paris{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="flex items-center">
+    <span class="mx-1 text-gray-500">/</span>
+    <span class="text-fr-blue font-medium">Paramètres</span>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow-md rounded-lg overflow-hidden max-w-3xl mx-auto">
+    <!-- En-tête -->
+    <div class="bg-fr-blue py-4 px-6">
+        <h1 class="text-xl font-bold text-white">{{ title }}</h1>
+        <p class="text-sm text-gray-100 mt-1">Configurez vos préférences d'affichage</p>
+    </div>
+
+    <!-- Formulaire -->
+    <div class="p-6">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 gap-6">
+                {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% if field.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="flex justify-end space-x-3 pt-5 border-t border-gray-200">
+                <a href="{% url 'project_management:home' %}"
+                    class="px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-fr-blue">
+                    Annuler
+                </a>
+                <button type="submit"
+                    class="inline-flex justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-fr-blue hover:bg-fr-blue-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-fr-blue">
+                    Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Informations supplémentaires -->
+    <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+        <div class="text-sm text-gray-600">
+            <p>Ces paramètres déterminent le nombre d'éléments affichés par page dans les différentes listes de
+                l'application.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

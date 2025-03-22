@@ -1,0 +1,204 @@
+/* Styles personnalisés pour l'interface d'administration de la Mairie de Paris */
+
+:root {
+    --primary: #E4002B;     /* Rouge Paris */
+    --secondary: #1A3E80;   /* Bleu foncé Paris */
+    --accent: #1A3E80;      /* Bleu foncé pour les accents */
+    --primary-fg: #fff;     /* Texte blanc sur fond principal */
+
+    --body-fg: #333;        /* Couleur de texte principale */
+    --body-bg: #F5F5F5;     /* Fond gris clair */
+    --body-quiet-color: #666; /* Texte secondaire */
+
+    --header-color: #E4002B; /* Couleur d'en-tête */
+    --header-branding-color: #FFFFFF; /* Couleur du texte du titre */
+    --header-bg: #E4002B;    /* Fond d'en-tête rouge Paris */
+    --header-link-color: #FFFFFF; /* Liens dans l'en-tête */
+
+    --breadcrumbs-fg: #333;  /* Couleur du fil d'Ariane */
+    --breadcrumbs-bg: #e9ecef; /* Fond du fil d'Ariane */
+
+    --link-fg: #1A3E80;      /* Couleur des liens */
+    --link-hover-color: #E4002B; /* Couleur de survol des liens */
+
+    --button-bg: #E4002B;    /* Fond des boutons */
+    --button-fg: #fff;       /* Texte des boutons */
+}
+
+/* Polices personnalisées */
+body {
+    font-family: 'Marianne', 'Source Sans Pro', Arial, sans-serif;
+    background-color: #F5F5F5;
+}
+
+/* Style du header */
+#header {
+    background: linear-gradient(135deg, #E4002B 0%, #C4001B 100%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-bottom: 4px solid #1A3E80;
+}
+
+/* Logo et titre */
+#site-name {
+    display: flex;
+    align-items: center;
+}
+
+#site-name img {
+    margin-right: 12px;
+    max-height: 48px;
+}
+
+#site-name span {
+    font-size: 1.3em;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+/* Buttons */
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    background: #E4002B;
+    transition: all 0.2s ease;
+}
+
+.button:hover, input[type=submit]:hover, input[type=button]:hover, .submit-row input:hover, a.button:hover {
+    background: #C4001B;
+}
+
+.button.default, input[type=submit].default, .submit-row input.default {
+    background: #1A3E80;
+}
+
+.button.default:hover, input[type=submit].default:hover, .submit-row input.default:hover {
+    background: #152F60;
+}
+
+/* Actions de liste */
+.object-tools a {
+    background-color: var(--secondary);
+    font-weight: 600;
+}
+
+.object-tools a:hover {
+    background-color: #152F60;
+}
+
+/* Dashboard */
+.dashboard .module h2,
+.module caption {
+    background: #1A3E80;
+    padding: 12px 10px;
+    font-weight: 600;
+}
+
+.dashboard .module {
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+/* Tableaux */
+table thead th {
+    background: #f0f0f0;
+    color: #333;
+    font-weight: 600;
+}
+
+.row1 {
+    background: #fff;
+}
+
+.row2 {
+    background: #f9f9f9;
+}
+
+/* Style du pied de page */
+#footer {
+    padding: 20px;
+    text-align: center;
+    background: #1A3E80;
+    color: white;
+    border-top: none;
+    margin-top: 30px;
+}
+
+/* Messages */
+.success {
+    background: #D4EDDA;
+    border-color: #C3E6CB;
+    color: #155724;
+}
+
+.errornote {
+    background: #F8D7DA;
+    border-color: #F5C6CB;
+    color: #721C24;
+}
+
+/* Navigation latérale */
+.module h2, .module caption {
+    background: var(--secondary);
+}
+
+/* Statuts colorés */
+.field-status_colored span,
+.field-role_colored span,
+.field-priority_colored span {
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.priority-haute, .status-urgent {
+    color: #E4002B !important;
+}
+
+.priority-moyenne, .status-en_cours {
+    color: #FF9800 !important;
+}
+
+.priority-basse, .status-terminé {
+    color: #2E7D32 !important;
+}
+
+.status-à_faire {
+    color: #1A3E80 !important;
+}
+
+/* Login page */
+.login {
+    background: linear-gradient(135deg, rgba(26, 62, 128, 0.9) 0%, rgba(228, 0, 43, 0.8) 100%), url('/static/img/paris-background.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.login #header {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+.login .form-row {
+    padding: 5px 0;
+}
+
+.login .form-row label {
+    color: #fff;
+    font-weight: bold;
+}
+
+.login .submit-row {
+    padding: 15px 0 0 0;
+}
+
+.login .submit-row input {
+    background: #E4002B;
+    text-transform: uppercase;
+    font-weight: bold;
+}

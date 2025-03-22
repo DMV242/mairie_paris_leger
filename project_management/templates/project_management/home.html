@@ -1,0 +1,282 @@
+{% extends 'project_management/base.html' %}
+
+{% block title %}Tableau de bord - Gestion de Projet{% endblock %}
+
+{% block breadcrumb_items %}
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Statistiques -->
+    <div class="col-span-1 md:col-span-3">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold text-fr-blue mb-4">Bienvenue sur votre tableau de bord, {{ user.first_name|default:user.username }}!</h2>
+            <p class="text-gray-600 mb-6">Ce tableau de bord vous permet de suivre vos projets et tâches en cours. Accédez rapidement aux informations importantes et restez organisé.</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-fr-gray p-4 rounded-lg border border-fr-blue/20">
+                    <h3 class="text-fr-blue font-medium mb-1">Vos Projets</h3>
+                    <p class="text-3xl font-bold text-fr-blue-dark">{{ user_projects.count }}</p>
+                    <a href="{% url 'project_management:project_list' %}" class="text-sm text-fr-blue hover:underline mt-2 inline-block">Voir tous vos projets</a>
+                </div>
+
+                <div class="bg-fr-gray p-4 rounded-lg border border-fr-blue/20">
+                    <h3 class="text-fr-blue font-medium mb-1">Vos Tâches</h3>
+                    <p class="text-3xl font-bold text-fr-blue-dark">{{ all_user_tasks.count }}</p>
+                    <a href="#all-tasks" class="text-sm text-fr-blue hover:underline mt-2 inline-block">Voir toutes vos tâches</a>
+                </div>
+
+                <div class="bg-fr-gray p-4 rounded-lg border border-fr-blue/20">
+                    <h3 class="text-fr-blue font-medium mb-1">Tâches en retard</h3>
+                    <p class="text-3xl font-bold text-red-600">{{ overdue_tasks_count|default:"0" }}</p>
+                    <a href="#all-tasks" class="text-sm text-fr-blue hover:underline mt-2 inline-block">Voir les tâches en retard</a>
+                </div>
+
+                <div class="bg-fr-gray p-4 rounded-lg border border-fr-blue/20">
+                    <h3 class="text-fr-blue font-medium mb-1">Tâches terminées</h3>
+                    <p class="text-3xl font-bold text-green-600">{{ completed_tasks_count|default:"0" }}</p>
+                    <a href="#all-tasks" class="text-sm text-fr-blue hover:underline mt-2 inline-block">Voir les tâches terminées</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Projets récents -->
+    <div class="col-span-1 md:col-span-2">
+        <div class="bg-white p-6 rounded-lg shadow-md h-full">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">Vos projets récents</h2>
+                <a href="{% url 'project_management:project_list' %}" class="text-sm text-fr-blue hover:underline">Voir tous</a>
+            </div>
+
+            {% if user_projects %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Équipe</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date de fin</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for project in user_projects %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <a href="{% url 'project_management:project_detail' project.id %}" class="text-fr-blue hover:underline">
+                                    {{ project.name }}
+                                </a>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ project.team.name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        {% if project.status == 'En cours' %}
+                                            bg-blue-100 text-blue-800
+                                        {% elif project.status == 'Terminé' %}
+                                            bg-green-100 text-green-800
+                                        {% else %}
+                                            bg-red-100 text-red-800
+                                        {% endif %}">
+                                    {{ project.status }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ project.end_date|date:"d/m/Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-8">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun projet</h3>
+                <p class="mt-1 text-sm text-gray-500">Vous n'avez pas encore de projets attribués.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Tâches à venir -->
+    <div class="col-span-1">
+        <div class="bg-white p-6 rounded-lg shadow-md h-full">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">Vos tâches à venir</h2>
+            </div>
+
+            {% if user_tasks %}
+            <div class="space-y-4">
+                {% for task in user_tasks %}
+                <div class="border border-gray-200 rounded-md p-4 hover:bg-gray-50">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <span class="inline-flex items-center justify-center h-8 w-8 rounded-full
+                                        {% if task.status == 'À faire' %}
+                                            bg-yellow-100 text-yellow-600
+                                        {% elif task.status == 'En cours' %}
+                                            bg-blue-100 text-blue-600
+                                        {% else %}
+                                            bg-green-100 text-green-600
+                                        {% endif %}">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <a href="{% url 'project_management:task_detail' task.id %}" class="text-sm font-medium text-fr-blue hover:underline">
+                                        {{ task.title }}
+                                    </a>
+                                </div>
+                                <div class="text-xs text-gray-500">
+                                    {{ task.due_date|date:"d/m/Y" }}
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-1 truncate">
+                                {{ task.description|truncatechars:100 }}
+                            </p>
+                            <div class="mt-2 flex items-center justify-between">
+                                <div>
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                {% if task.priority == 'Basse' %}
+                                                    bg-green-100 text-green-800
+                                                {% elif task.priority == 'Moyenne' %}
+                                                    bg-blue-100 text-blue-800
+                                                {% elif task.priority == 'Haute' %}
+                                                    bg-orange-100 text-orange-800
+                                                {% else %}
+                                                    bg-red-100 text-red-800
+                                                {% endif %}">
+                                        {{ task.priority }}
+                                    </span>
+                                </div>
+                                <a href="{% url 'project_management:project_detail' task.project.id %}" class="text-xs text-gray-500 hover:text-fr-blue">
+                                    {{ task.project.name }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-8">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">Aucune tâche</h3>
+                <p class="mt-1 text-sm text-gray-500">Vous n'avez pas de tâches à venir.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Liste complète des tâches -->
+    <div id="all-tasks" class="col-span-1 md:col-span-3">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">Toutes vos tâches</h2>
+            </div>
+
+            {% if all_user_tasks %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titre</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Projet</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priorité</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date d'échéance</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for task in all_user_tasks %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <a href="{% url 'project_management:task_detail' task.id %}" class="text-fr-blue hover:underline">
+                                    {{ task.title }}
+                                </a>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <a href="{% url 'project_management:project_detail' task.project.id %}" class="text-fr-blue hover:underline">
+                                    {{ task.project.name }}
+                                </a>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        {% if task.status == 'À faire' %}
+                                            bg-yellow-100 text-yellow-800
+                                        {% elif task.status == 'En cours' %}
+                                            bg-blue-100 text-blue-800
+                                        {% elif task.status == 'Terminé' %}
+                                            bg-green-100 text-green-800
+                                        {% else %}
+                                            bg-gray-100 text-gray-800
+                                        {% endif %}">
+                                    {{ task.status }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        {% if task.priority == 'basse' %}
+                                            bg-green-100 text-green-800
+                                        {% elif task.priority == 'moyenne' %}
+                                            bg-blue-100 text-blue-800
+                                        {% elif task.priority == 'haute' %}
+                                            bg-orange-100 text-orange-800
+                                        {% elif task.priority == 'urgente' %}
+                                            bg-red-100 text-red-800
+                                        {% endif %}">
+                                    {{ task.priority }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {% if task.due_date %}
+                                    {% if task.due_date < now and task.status != 'Terminé' %}
+                                        <span class="text-red-600">{{ task.due_date|date:"d/m/Y" }}</span>
+                                    {% else %}
+                                        {{ task.due_date|date:"d/m/Y" }}
+                                    {% endif %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <div class="flex space-x-2">
+                                    <a href="{% url 'project_management:task_detail' task.id %}" class="text-fr-blue hover:text-fr-blue-dark">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </a>
+                                    <a href="{% url 'project_management:task_update' task.id %}" class="text-fr-blue hover:text-fr-blue-dark">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-8">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">Aucune tâche</h3>
+                <p class="mt-1 text-sm text-gray-500">Vous n'avez aucune tâche assignée pour le moment.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

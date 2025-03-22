@@ -1,0 +1,327 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gestion de Projet - Mairie de Paris{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'project_management/images/marie_paris.svg' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'fr-blue': '#000091',
+                        'fr-red': '#E1000F',
+                        'fr-blue-light': '#6a6af4',
+                        'fr-blue-dark': '#00006D',
+                        'fr-gray': '#F5F5FE',
+                        'fr-dark': '#1E1E1E',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Marianne', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Header avec bandeau tricolore -->
+    <div class="bg-fr-blue h-1 w-full"></div>
+    <div class="bg-white h-1 w-full"></div>
+    <div class="bg-fr-red h-1 w-full"></div>
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="{% url 'project_management:home' %}" class="flex items-center">
+                        <img src="{% static 'project_management/images/marie_paris.svg' %}" alt="Mairie de Paris"
+                            class="h-8 w-auto mr-3">
+                        <span class="text-fr-blue font-semibold text-lg">Gestion de Projet</span>
+                    </a>
+                </div>
+
+                <!-- Menu pour mobile -->
+                <div class="flex md:hidden">
+                    <button type="button" class="text-gray-500 hover:text-fr-blue focus:outline-none focus:text-fr-blue"
+                        aria-label="toggle menu" id="mobileMenuBtn">
+                        <svg viewBox="0 0 24 24" class="h-6 w-6 fill-current">
+                            <path fill-rule="evenodd"
+                                d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Menu pour desktop -->
+                <div class="hidden md:flex md:items-center">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'project_management:home' %}"
+                        class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-fr-blue mx-1">Accueil</a>
+                    <a href="{% url 'project_management:project_list' %}"
+                        class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-fr-blue mx-1">Projets</a>
+
+                    {% if user.is_staff or user.role == 'Administrateur'%}
+                    <a href="{% url 'project_management:team_list' %}" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-fr-blue mx-1">Équipes</a>
+                    <a href="{% url 'project_management:user_list' %}"
+                        class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-fr-blue mx-1">Utilisateurs</a>
+                    {% endif %}
+
+                    {% if user.role == 'Chef de projet' %}
+                    <a href="{% url 'project_management:team_list' %}" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-fr-blue mx-1">Équipes</a>
+                    {% endif %}
+
+                    <!-- Menu Utilisateur (dropdown) -->
+                    <div class="ml-3 relative">
+                        <div class="flex items-center">
+                            <div class="mr-3 text-right">
+                                <div class="text-sm font-medium text-gray-900">{{ user.username }}</div>
+                                <div class="text-xs text-gray-500">
+                                    {% if user.is_staff %}
+                                    Administrateur
+                                    {% elif 'Chef de projet' in user.groups.all|stringformat:'s' %}
+                                    Chef de projet
+                                    {% else %}
+                                    Membre d'équipe
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <button type="button"
+                                class="flex items-center max-w-xs bg-fr-blue rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-fr-blue-light focus:ring-opacity-50"
+                                id="user-menu-button" aria-expanded="false" aria-haspopup="true"
+                                onclick="toggleUserMenu()">
+                                <span class="sr-only">Open user menu</span>
+                                <div
+                                    class="h-8 w-8 rounded-full bg-fr-blue-dark flex items-center justify-center text-white font-bold">
+                                    {{ user.username|first|upper }}
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- Dropdown menu -->
+                        <div class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+                            role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1"
+                            id="user-menu">
+                            <!-- Lien profil -->
+                            <a href="{% url 'project_management:user_profile' %}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem"
+                                tabindex="-1">
+                                Mon profil
+                            </a>
+                            <!-- Lien paramètres -->
+                            <a href="{% url 'project_management:user_settings' %}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem"
+                                tabindex="-1">
+                                Paramètres
+                            </a>
+                            <!-- Lien changer mot de passe -->
+                            <a href="{% url 'project_management:change_password' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem"
+                                tabindex="-1">
+                                Changer de mot de passe
+                            </a>
+                            <!-- Lien déconnexion -->
+                            <a href="{% url 'project_management:logout' %}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem"
+                                tabindex="-1">
+                                Déconnexion
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'project_management:login' %}"
+                        class="px-4 py-2 text-sm font-medium text-white bg-fr-blue hover:bg-fr-blue-dark rounded-md">Connexion</a>
+                    <a href="{% url 'project_management:register' %}"
+                        class="ml-2 px-4 py-2 text-sm font-medium text-fr-blue border border-fr-blue hover:bg-fr-gray rounded-md">Inscription</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Menu Mobile (caché par défaut) -->
+            <div class="hidden md:hidden" id="mobileMenu">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'project_management:home' %}"
+                        class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-fr-blue">Accueil</a>
+                    <a href="{% url 'project_management:project_list' %}"
+                        class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-fr-blue">Projets</a>
+
+                    {% if user.is_staff or user.role == 'Administrateur' or user.role == 'Chef de projet' %}
+                    <a href="{% url 'project_management:team_list' %}"
+                        class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-fr-blue">Équipes</a>
+                    <a href="{% url 'project_management:user_list' %}"
+                        class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-fr-blue">Utilisateurs</a>
+                    {% endif %}
+
+                    <div class="border-t border-gray-200 mt-2 pt-2">
+                        <div class="flex items-center px-3 py-2">
+                            <span class="text-base font-medium text-gray-700">{{ user.username }}</span>
+                            <span
+                                class="ml-2 inline-block px-2 py-1 text-xs font-medium rounded-full bg-fr-gray text-fr-blue">
+                                {% if user.role == 'Administrateur' %}
+                                Administrateur
+                                {% elif user.role == 'Chef de projet' %}
+                                Chef de projet
+                                {% else %}
+                                Membre d'équipe
+                                {% endif %}
+                            </span>
+                        </div>
+                        <a href="{% url 'project_management:user_profile' %}"
+                            class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-fr-blue">Profil</a>
+                        <a href="{% url 'project_management:user_settings' %}"
+                            class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-fr-blue">Paramètres</a>
+                        <a href="{% url 'project_management:change_password' %}"
+                            class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-fr-blue">Changer de mot de passe</a>
+                        <a href="{% url 'project_management:logout' %}"
+                            class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-fr-blue">Déconnexion</a>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'project_management:login' %}"
+                        class="block px-3 py-2 text-base font-medium text-white bg-fr-blue hover:bg-fr-blue-dark rounded-md">Connexion</a>
+                    <a href="{% url 'project_management:register' %}"
+                        class="block px-3 py-2 mt-2 text-base font-medium text-fr-blue border border-fr-blue hover:bg-fr-gray rounded-md">Inscription</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container mx-auto px-4 py-2">
+        {% for message in messages %}
+        <div
+            class="rounded-md p-4 mb-3 {% if message.tags == 'error' %}bg-red-50 border border-red-300{% else %}bg-green-50 border border-green-300{% endif %} shadow-sm">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    {% if message.tags == 'error' %}
+                    <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    {% else %}
+                    <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    {% endif %}
+                </div>
+                <div class="ml-3">
+                    <p
+                        class="text-sm font-medium {% if message.tags == 'error' %}text-red-800{% else %}text-green-800{% endif %}">
+                        {{ message }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Fil d'Ariane (Breadcrumbs) -->
+    <div class="bg-fr-gray py-2">
+        <div class="container mx-auto px-4">
+            {% block breadcrumbs %}
+            <nav class="flex" aria-label="Breadcrumb">
+                <ol class="flex items-center space-x-1 text-sm">
+                    <li>
+                        <a href="{% url 'project_management:home' %}"
+                            class="text-gray-500 hover:text-fr-blue">Accueil</a>
+                    </li>
+                    {% block breadcrumb_items %}{% endblock %}
+                </ol>
+            </nav>
+            {% endblock %}
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <main class="container mx-auto px-4 py-6 flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-fr-blue text-white py-8 mt-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="mb-6 md:mb-0">
+                    <img src="{% static 'project_management/images/marie_paris.svg' %}" alt="Mairie de Paris"
+                        class="h-8 w-auto mb-4 brightness-0 invert">
+                    <p class="text-sm">&copy; {% now "Y" %} Mairie de Paris - Tous droits réservés</p>
+                </div>
+                <div class="grid grid-cols-2 gap-8 sm:grid-cols-3">
+                    <div>
+                        <h3 class="text-sm font-semibold uppercase tracking-wider mb-2">Liens utiles</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="text-gray-300 hover:text-white">Plan du site</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-white">Mentions légales</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-white">Politique de confidentialité</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold uppercase tracking-wider mb-2">Ressources</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="text-gray-300 hover:text-white">Aide</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-white">Documentation</a></li>
+                            <li><a href="#" class="text-gray-300 hover:text-white">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle mobile menu
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Toggle pour le menu utilisateur
+        function toggleUserMenu() {
+            const menu = document.getElementById('user-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Fermer le menu utilisateur quand on clique ailleurs
+        document.addEventListener('click', function (event) {
+            const menu = document.getElementById('user-menu');
+            const button = document.getElementById('user-menu-button');
+
+            if (menu && button && !menu.contains(event.target) && !button.contains(event.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        // Fermer les alertes
+        const closeButtons = document.querySelectorAll('[data-dismiss="alert"]');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const alert = button.closest('.alert');
+                if (alert) {
+                    alert.remove();
+                }
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,269 @@
+{% extends 'project_management/base.html' %}
+
+{% block title %}{{ task.title }}{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="flex items-center">
+    <svg class="w-4 h-4 text-gray-400 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+    </svg>
+    <a href="{% url 'project_management:project_list' %}" class="text-gray-500 hover:text-fr-blue">Tâches</a>
+</li>
+<li class="flex items-center">
+    <svg class="w-4 h-4 text-gray-400 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+    </svg>
+    <span class="text-gray-700">{{ task.title }}</span>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow overflow-hidden sm:rounded-lg max-w-4xl mx-auto">
+    <!-- En-tête de la tâche avec le titre et les actions -->
+    <div class="bg-gradient-to-r from-fr-blue to-fr-blue-dark px-4 py-5 sm:px-6 text-white">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-semibold">{{ task.title }}</h1>
+                <div class="mt-1 flex items-center">
+                    <a href="{% url 'project_management:project_detail' task.project.id %}"
+                        class="text-sm text-white hover:underline">
+                        Projet: {{ task.project.name }}
+                    </a>
+                    <span class="mx-2">•</span>
+                    {% if task.status == 'À faire' %}
+                    <span
+                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{{task.status }}</span>
+                    {% elif task.status == 'En cours' %}
+                    <span
+                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">{{task.status }}</span>
+                    {% elif task.status == 'En attente' %}
+                    <span
+                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">{{task.status }}</span>
+                    {% elif task.status == 'Terminé' %}
+                    <span
+                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{task.status }}</span>
+                    {% else %}
+                    <span
+                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{{task.status }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="flex space-x-2">
+                <a href="{% url 'project_management:task_update' task.id %}"
+                    class="inline-flex items-center px-3 py-1.5 border border-white rounded-md shadow-sm text-sm font-medium text-white hover:bg-white hover:text-fr-blue-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white">
+                    <svg class="-ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path
+                            d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                    Modifier
+                </a>
+                <a href="{% url 'project_management:task_delete' task.id %}"
+                    class="inline-flex items-center px-3 py-1.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-fr-red hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    <svg class="-ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Supprimer
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informations détaillées sur la tâche -->
+    <div class="border-t border-gray-200 p-6">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <!-- Colonne gauche : informations de base -->
+            <div>
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Informations générales</h2>
+                <dl class="grid grid-cols-1 gap-x-4 gap-y-6">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Priorité</dt>
+                        <dd class="mt-1 text-sm text-gray-900">
+                            {% if task.priority == 'Basse' %}
+                            <span
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{task.priority }}</span>
+                            {% elif task.priority == 'Moyenne' %}
+                            <span
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">{{task.priority }}</span>
+                            {% elif task.priority == 'Haute' %}
+                            <span
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">{{task.priority }}</span>
+                            {% elif task.priority == 'Urgente' %}
+                            <span
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">{{task.priority }}</span>
+                            {% else %}
+                            <span
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{{task.priority }}</span>
+                            {% endif %}
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Assignée à</dt>
+                        <dd class="mt-1 text-sm text-gray-900 flex items-center">
+                            <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-gray-500 mr-2">
+                                <span class="text-xs font-medium leading-none text-white">
+                                    {{ task.assigned_to.username|slice:":2"|upper }}
+                                </span>
+                            </span>
+                            {{ task.assigned_to.username }}
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Date d'échéance</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ task.due_date|date:"d/m/Y" }}</dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Date de création</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ task.created_at|date:"d/m/Y H:i" }}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <!-- Colonne droite : description -->
+            <div>
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Description</h2>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-900 whitespace-pre-line">{{ task.description|linebreaksbr }}</p>
+                </div>
+
+                <!-- Temps passé sur la tâche -->
+
+            </div>
+        </div>
+
+        <!-- Section des pièces jointes -->
+        <div class="mt-8">
+            <h2 class="text-lg font-medium text-gray-900 mb-4">Pièces jointes</h2>
+            {% if attachments %}
+            <ul role="list" class="border border-gray-200 rounded-md divide-y divide-gray-200">
+                {% for attachment in attachments %}
+                <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                    <div class="w-0 flex-1 flex items-center">
+                        <svg class="flex-shrink-0 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="ml-2 flex-1 w-0 truncate">{{ attachment.filename }}</span>
+                    </div>
+                    <div class="ml-4 flex-shrink-0">
+                        <a href="{{ attachment.file.url }}" class="font-medium text-fr-blue hover:text-fr-blue-dark">
+                            Télécharger
+                        </a>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-sm text-gray-500">Aucune pièce jointe disponible.</p>
+            {% endif %}
+
+            <div class="mt-4">
+                {% comment %}
+                <!-- Formulaire caché car l'URL add_attachment n'existe pas -->
+                <form method="post" enctype="multipart/form-data"
+                    action="{% url 'project_management:add_attachment' task.id %}">
+                    {% csrf_token %}
+                    <div class="flex items-center">
+                        <input type="file" name="file" id="file" class="sr-only" multiple>
+                        <label for="file"
+                            class="cursor-pointer inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-fr-blue">
+                            <svg class="-ml-0.5 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                            </svg>
+                            Ajouter des fichiers
+                        </label>
+                        <button type="submit"
+                            class="ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-fr-blue hover:bg-fr-blue-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-fr-blue">
+                            Téléverser
+                        </button>
+                    </div>
+                </form>
+                {% endcomment %}
+            </div>
+        </div>
+
+        <!-- Section des commentaires -->
+        <div class="mt-8">
+            <h2 class="text-lg font-medium text-gray-900 mb-4">Commentaires</h2>
+
+            <!-- Formulaire d'ajout de commentaire -->
+            <div class="mb-6">
+                <form method="post" action="{% url 'project_management:task_comment' task.id %}">
+                    {% csrf_token %}
+                    <div class="flex flex-col space-y-3">
+                        <label for="content" class="sr-only">Ajouter un commentaire</label>
+                        <textarea name="content" id="content" rows="3" placeholder="Ajouter un commentaire..." required
+                            class="shadow-sm focus:ring-fr-blue focus:border-fr-blue block w-full sm:text-sm border-gray-300 rounded-md"></textarea>
+                        <div class="text-right">
+                            <button type="submit"
+                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-fr-blue hover:bg-fr-blue-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-fr-blue">
+                                Commenter
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Liste des commentaires -->
+            {% if comments %}
+            <div class="space-y-4">
+                {% for comment in comments %}
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex space-x-3">
+                        <div class="flex-shrink-0">
+                            <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-gray-500">
+                                <span class="font-medium leading-none text-white">{{
+                                    comment.user.username|slice:":2"|upper }}</span>
+                            </span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-medium text-gray-900">
+                                {{ comment.user.username }}
+                                <span class="text-sm text-gray-500">• {{ comment.publish_date|date:"d/m/Y H:i" }}</span>
+                            </p>
+                            <div class="mt-2 text-sm text-gray-700 space-y-4">
+                                <p>{{ comment.content|linebreaksbr }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-sm text-gray-500">Aucun commentaire pour le moment.</p>
+            {% endif %}
+        </div>
+
+        <!-- Actions supplémentaires -->
+        <div class="mt-8 flex justify-end">
+            {% comment %}
+            <!-- Bouton de marquage comme terminé caché car l'URL complete_task n'existe pas -->
+            {% if task.status != 'Terminé' %}
+            <form method="post" action="{% url 'project_management:complete_task' task.id %}">
+                {% csrf_token %}
+                <button type="submit"
+                    class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Marquer comme terminée
+                </button>
+            </form>
+            {% endif %}
+            {% endcomment %}
+        </div>
+    </div>
+</div>
+{% endblock %}

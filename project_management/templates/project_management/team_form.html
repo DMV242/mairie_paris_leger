@@ -1,0 +1,117 @@
+{% extends 'project_management/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="flex items-center">
+    <svg class="w-4 h-4 text-gray-400 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+    </svg>
+    <a href="{% url 'project_management:team_list' %}" class="text-gray-500 hover:text-fr-blue">Équipes</a>
+</li>
+<li class="flex items-center">
+    <svg class="w-4 h-4 text-gray-400 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+    </svg>
+    <span class="text-gray-700">{% if form.instance.id %}Modifier{% else %}Créer{% endif %}</span>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow-lg overflow-hidden sm:rounded-lg max-w-3xl mx-auto">
+    <div class="bg-gradient-to-r from-green-600 to-green-700 px-4 py-5 sm:px-6 text-white">
+        <h1 class="text-xl font-semibold">{{ title }}</h1>
+        <p class="mt-1 text-sm">Complétez le formulaire ci-dessous pour {% if form.instance.id %}modifier{% else
+            %}créer{% endif %} une équipe</p>
+    </div>
+
+    <div class="p-6">
+        <form method="post" class="space-y-8">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6 rounded-r-md shadow">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700 font-medium">
+                            Veuillez corriger les erreurs ci-dessous.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 gap-y-8 gap-x-6 sm:grid-cols-6">
+                <!-- Nom de l'équipe -->
+                <div class="sm:col-span-6">
+                    <label for="id_name" class="block text-sm font-medium text-gray-700 mb-1">Nom de l'équipe</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </div>
+                        <input type="text" name="name" id="id_name" value="{{ form.name.value|default_if_none:'' }}"
+                            required
+                            class="pl-10 shadow-sm focus:ring-fr-blue focus:border-fr-blue block w-full text-base border-gray-300 rounded-lg py-3 transition duration-150 ease-in-out {% if form.name.errors %}border-red-300 text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500{% endif %}"
+                            placeholder="Entrez le nom de l'équipe">
+                    </div>
+                    {% if form.name.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Membres de l'équipe -->
+                <div class="sm:col-span-6">
+                    <label for="id_members" class="block text-sm font-medium text-gray-700 mb-1">Membres de
+                        l'équipe</label>
+                    <div class="relative">
+                        <div class="absolute top-3 left-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        </div>
+                        <select name="members" id="id_members" multiple
+                            class="pl-10 shadow-sm focus:ring-fr-blue focus:border-fr-blue block w-full text-base border-gray-300 rounded-lg py-3 transition duration-150 ease-in-out {% if form.members.errors %}border-red-300 text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500{% endif %}"
+                            size="8">
+                            {% for member in form.members.field.queryset %}
+                            <option value="{{ member.id }}" {% if member.id in form.members.value %}selected{% endif %}>
+                                {{ member.first_name }} {{ member.last_name }} ({{ member.username }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <p class="mt-2 text-xs text-gray-500">Maintenez la touche Ctrl (ou Cmd sur Mac) pour sélectionner
+                        plusieurs membres</p>
+                    {% if form.members.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.members.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Boutons -->
+            <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200 mt-8">
+                <a href="{% url 'project_management:team_list' %}"
+                    class="px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-fr-blue transition duration-150 ease-in-out">
+                    Annuler
+                </a>
+                <button type="submit"
+                    class="px-4 py-3 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out">
+                    {% if form.instance.id %}Mettre à jour{% else %}Créer{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

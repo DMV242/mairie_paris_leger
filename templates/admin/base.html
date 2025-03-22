@@ -1,0 +1,63 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+
+{% block footer %}
+<div id="footer">
+    <div class="content">
+        <div class="footer-links">
+            <a href="https://www.paris.fr/" target="_blank">Site officiel</a> |
+            <a href="https://www.paris.fr/pages/la-mairie-de-paris-ce-qu-il-faut-savoir-3363" target="_blank">À propos</a> |
+            <a href="https://www.paris.fr/pages/services-en-ligne-197" target="_blank">Services en ligne</a> |
+            <a href="https://www.paris.fr/pages/nous-contacter-5247" target="_blank">Contact</a>
+        </div>
+        <div class="footer-copyright">
+            &copy; {% now "Y" %} Mairie de Paris - Tous droits réservés
+        </div>
+        <div class="footer-disclaimer">
+            <small>{% translate "Cette plateforme est destinée à un usage professionnel dans le cadre de la gestion de projets municipaux." %}</small>
+        </div>
+    </div>
+</div>
+
+<style>
+    #footer {
+        background: #1A3E80;
+        color: rgba(255, 255, 255, 0.9);
+        padding: 25px 0;
+        margin-top: 40px;
+    }
+
+    #footer .content {
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 0 20px;
+    }
+
+    .footer-links {
+        margin-bottom: 15px;
+    }
+
+    .footer-links a {
+        color: white;
+        text-decoration: none;
+        margin: 0 10px;
+        font-weight: 500;
+    }
+
+    .footer-links a:hover {
+        text-decoration: underline;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .footer-copyright {
+        margin-bottom: 10px;
+        font-size: 0.9em;
+    }
+
+    .footer-disclaimer {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.8em;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'project_management/base.html' %}
+
+{% block title %}Supprimer le projet {{ project.name }}{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="flex items-center">
+    <svg class="w-4 h-4 text-gray-400 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+    </svg>
+    <a href="{% url 'project_management:project_list' %}" class="text-gray-500 hover:text-fr-blue">Projets</a>
+</li>
+<li class="flex items-center">
+    <svg class="w-4 h-4 text-gray-400 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+    </svg>
+    <a href="{% url 'project_management:project_detail' project.id %}" class="text-gray-500 hover:text-fr-blue">{{
+        project.name }}</a>
+</li>
+<li class="flex items-center">
+    <svg class="w-4 h-4 text-gray-400 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+    </svg>
+    <span class="text-gray-700">Supprimer</span>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow overflow-hidden sm:rounded-lg max-w-2xl mx-auto">
+    <div class="px-4 py-5 sm:px-6 bg-red-600 text-white">
+        <h1 class="text-xl font-semibold">Supprimer le projet</h1>
+        <p class="mt-1 text-sm">Cette action est irréversible</p>
+    </div>
+
+    <div class="p-6">
+        <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-red-700">
+                        Attention : Vous êtes sur le point de supprimer le projet <strong>{{ project.name }}</strong>.
+                        Cette action supprimera également toutes les tâches associées et ne peut pas être annulée.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gray-50 p-4 rounded-lg mb-6">
+            <h2 class="text-lg font-medium text-gray-900 mb-2">Informations sur le projet</h2>
+            <dl class="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Nom</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ project.name }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Équipe</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ project.team.nom }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Date de début</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ project.start_date|date:"d/m/Y" }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Date de fin</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ project.end_date|date:"d/m/Y" }}</dd>
+                </div>
+                <div class="sm:col-span-2">
+                    <dt class="text-sm font-medium text-gray-500">Statut</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ project.statuts }}</dd>
+                </div>
+            </dl>
+        </div>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            <div class="flex justify-end space-x-3">
+                <a href="{% url 'project_management:project_detail' project.id %}"
+                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-fr-blue">
+                    Annuler
+                </a>
+                <button type="submit"
+                    class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    Confirmer la suppression
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

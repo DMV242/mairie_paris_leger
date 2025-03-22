@@ -1,0 +1,49 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Environnement virtuel
+venv/
+env/
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers de migration Django
+*/migrations/*.py
+!*/migrations/__init__.py
+
+# Fichiers statiques collectés
+staticfiles/
+static/admin/
+static/rest_framework/
+
+# Fichiers de test et couverture
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Fichiers de dépendances
+requirements.txt.lock
+pip-log.txt
+
+# Fichiers de configuration locaux
+*.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
