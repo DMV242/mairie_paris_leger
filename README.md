@@ -76,7 +76,7 @@ python manage.py runserver
 ## Technologies utilisées
 
 - Backend : Django
-- Frontend : HTML, CSS, jQuery, Bootstrap
+- Frontend : HTML, CSS, Javascript, Taildwind
 - Base de données : MySQL
 - Authentification : Session
 
