@@ -51,7 +51,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
-        print(self.request.headers)
+
         if self.action == 'retrieve':
             return ProjectDetailSerializer
         return ProjectSerializer
