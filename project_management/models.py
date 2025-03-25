@@ -8,7 +8,7 @@ from django.utils import timezone
 
 class User(AbstractUser):
     username = models.CharField(max_length=50, unique=True)
-    email = models.CharField(max_length=50)
+    email = models.CharField(max_length=50,unique=True)
     password = models.CharField(max_length=255)
     role = models.CharField(max_length=50)
     matricule = models.CharField(max_length=50, blank=True, null=True)
