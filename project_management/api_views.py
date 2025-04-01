@@ -94,6 +94,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         priority_param = self.request.query_params.get('priority', None)
         user_param = self.request.query_params.get('user', None)
         upcoming_param = self.request.query_params.get('upcoming', None)
+        overdue_param = self.request.query_params.get('overdue', None)
 
         if project_param:
             queryset = queryset.filter(project__id=project_param)
@@ -115,6 +116,13 @@ class TaskViewSet(viewsets.ModelViewSet):
                 due_date__gte=timezone.now(),
                 due_date__lte=seven_days_later
             )
+
+        # Filtre pour les tâches en retard (date échue et non terminées)
+        if overdue_param and overdue_param.lower() == 'true':
+            from django.utils import timezone
+            queryset = queryset.filter(
+                due_date__lt=timezone.now()
+            ).exclude(status='Terminé')
 
         return queryset
 

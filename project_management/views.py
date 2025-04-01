@@ -106,8 +106,9 @@ def home(request):
 
     # Compter les tâches en retard et terminées
     overdue_tasks_count = Task.objects.filter(
-        assigned_to=request.user, due_date__lt=timezone.now()
-    ).count()
+        assigned_to=request.user,
+        due_date__lt=timezone.now()
+    ).exclude(status='Terminé').count()
     completed_tasks_count = Task.objects.filter(
         assigned_to=request.user, status="Terminé"
     ).count()

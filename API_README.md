@@ -37,6 +37,7 @@ L'API est accessible à l'URL `/api/` et fournit les endpoints suivants :
 - **GET** `/api/tasks/?priority=haute` - Filtrer les tâches par priorité
 - **GET** `/api/tasks/?user=1` - Filtrer les tâches par utilisateur assigné
 - **GET** `/api/tasks/?upcoming=true` - Tâches avec échéance dans les 7 prochains jours
+- **GET** `/api/tasks/?overdue=true` - Tâches en retard (date d'échéance dépassée et non terminées)
 
 ### Équipes
 
