@@ -18,18 +18,12 @@ from .serializers import (
 def login_api(request):
     serializer = UserLoginSerializer(data=request.data)
     if serializer.is_valid():
-
-
         matricule = serializer.validated_data.get('matricule')
         password = serializer.validated_data.get('password')
-
         user = User.objects.get(matricule=matricule)
-
         if user.check_password(password):
             refresh = RefreshToken.for_user(user)
-
             user_serializer = UserSerializer(user)
-
             return Response({
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),

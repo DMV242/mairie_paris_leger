@@ -72,8 +72,8 @@
 
                     {% if user.is_staff or user.role == 'Administrateur'%}
                     <a href="{% url 'project_management:team_list' %}" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-fr-blue mx-1">Équipes</a>
-                    <a href="{% url 'project_management:user_list' %}"
-                        class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-fr-blue mx-1">Utilisateurs</a>
+                    {% comment %} <a href="{% url 'project_management:user_list' %}"
+                        class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-fr-blue mx-1">Utilisateurs</a> {% endcomment %}
                     {% endif %}
 
                     {% if user.role == 'Chef de projet' %}
