@@ -8,7 +8,7 @@ from django.utils import timezone
 
 class User(AbstractUser):
     username = models.CharField(max_length=50, unique=True)
-    email = models.CharField(max_length=50,unique=True)
+    email = models.CharField(max_length=50, unique=True)
     password = models.CharField(max_length=255)
     role = models.CharField(max_length=50)
     matricule = models.CharField(max_length=50, blank=True, null=True)
@@ -20,6 +20,8 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         is_new = self.pk is None
         if is_new:
+            super().save(*args, **kwargs)
+
             # Créer les groupes s'ils n'existent pas
             admin_group, _ = Group.objects.get_or_create(name="Administrateur")
             chef_projet_group, _ = Group.objects.get_or_create(name="Chef de projet")
